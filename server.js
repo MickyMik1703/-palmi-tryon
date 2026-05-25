@@ -1,13 +1,13 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname)));
 
-// Proxy: Start Try-On
 app.post('/api/run', async (req, res) => {
   const { fashn_key, model_image, garment_image } = req.body;
   if (!fashn_key || !model_image || !garment_image) {
@@ -33,7 +33,6 @@ app.post('/api/run', async (req, res) => {
   }
 });
 
-// Proxy: Check Status
 app.get('/api/status/:id', async (req, res) => {
   const { fashn_key } = req.query;
   if (!fashn_key) return res.status(400).json({ error: 'Missing key' });
@@ -46,6 +45,10 @@ app.get('/api/status/:id', async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
