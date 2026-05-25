@@ -14,6 +14,8 @@ app.post('/api/run', async (req, res) => {
     return res.status(400).json({ error: 'Missing fields' });
   }
   try {
+    const modelUrl = `data:image/jpeg;base64,${model_image}`;
+    const garmentUrl = `data:image/jpeg;base64,${garment_image}`;
     const r = await fetch('https://api.fashn.ai/v1/run', {
       method: 'POST',
       headers: {
@@ -22,7 +24,7 @@ app.post('/api/run', async (req, res) => {
       },
       body: JSON.stringify({
         model_name: 'tryon-v1.6',
-        inputs: { model_image, garment_image }
+        inputs: { model_image: modelUrl, garment_image: garmentUrl }
       })
     });
     const data = await r.json();
