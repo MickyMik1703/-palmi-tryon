@@ -45,7 +45,7 @@ header { background: var(--dark); border-bottom: 1px solid #333; padding: 14px 2
 .btn-gold { background: var(--gold); color: var(--dark); }
 .btn-gold:disabled { background: #ccc; color: #999; cursor: not-allowed; }
 .btn-outline { background: transparent; border: 1px solid #2c2c2c; color: #2c2c2c; }
-.error-box { background: #fdf0f0; border-left: 3px solid #e07b7b; padding: 9px 13px; font-size: 12px; color: #c0504d; margin-top: 12px; display: none; }
+.error-box { background: #fdf0f0; border-left: 3px solid #e07b7b; padding: 9px 13px; font-size: 12px; color: #c0504d; margin-top: 12px; display: none; line-height: 1.5; }
 .prog-wrap { margin-bottom: 24px; display: none; }
 .prog-bg { background: var(--warm); height: 3px; margin-bottom: 6px; }
 .prog-fill { height: 3px; background: var(--gold); width: 0%; transition: width 0.6s ease; }
@@ -73,7 +73,6 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
     <h1>Sieh dich <em>im Produkt</em></h1>
     <p>Echtes KI Try-On · Fashn.ai</p>
   </div>
-
   <div class="key-box">
     <div class="key-label">🔑 Fashn.ai API Key</div>
     <div class="key-row">
@@ -82,17 +81,15 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
     </div>
     <div class="key-ok" id="keyOk">✓ Key gespeichert — bereit</div>
   </div>
-
   <div class="steps">
     <div class="step active" id="s1">01 · Dein Foto</div>
     <div class="step" id="s2">02 · Produkt</div>
     <div class="step" id="s3">03 · Ergebnis</div>
   </div>
-
   <div class="panel active" id="p1">
     <div class="panel-title">Dein Foto</div>
     <div class="panel-sub">Ganzkörperfoto von vorne</div>
-    <div class="upload-zone" onclick="document.getElementById('fi1').click()">
+    <div class="upload-zone" id="zone1" onclick="document.getElementById('fi1').click()">
       <input type="file" id="fi1" accept="image/*" style="display:none" onchange="handleFile(event,'model')">
       <div class="icon">👤</div>
       <div class="zt">Foto hochladen</div>
@@ -107,12 +104,11 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
       <button class="btn btn-gold" id="btn1" onclick="goStep(2)" disabled>Weiter →</button>
     </div>
   </div>
-
   <div class="panel" id="p2">
     <div class="panel-title">Produkt Foto</div>
     <div class="panel-sub">Das Kleidungsstück zum Anprobieren</div>
     <div class="tip-box">Tipp: Weißer Hintergrund für beste Ergebnisse. Kein Model auf dem Foto.</div>
-    <div class="upload-zone" onclick="document.getElementById('fi2').click()">
+    <div class="upload-zone" id="zone2" onclick="document.getElementById('fi2').click()">
       <input type="file" id="fi2" accept="image/*" style="display:none" onchange="handleFile(event,'garment')">
       <div class="icon">👕</div>
       <div class="zt">Kleidungsstück hochladen</div>
@@ -128,7 +124,6 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
       <button class="btn btn-gold" id="btn2" onclick="runTryOn()" disabled>Try-On starten →</button>
     </div>
   </div>
-
   <div class="panel" id="p3">
     <div class="panel-title">Dein Try-On Ergebnis</div>
     <div class="panel-sub">1 Credit · Fashn.ai v1.6</div>
@@ -163,18 +158,13 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
   </div>
 </div>
 <footer>PALMI · Mediterranean Lifestyle · Virtual Try-On</footer>
-
 <script>
-const state = { key:'', modelB64:null, garmentB64:null, resultUrl:null };
-
+const state = { key:'', modelDataUrl:null, garmentDataUrl:null, resultUrl:null };
 function saveKey() {
   const k = document.getElementById('apiKey').value.trim();
   if (!k.startsWith('fa-')) { alert('Key muss mit "fa-" beginnen'); return; }
-  state.key = k;
-  document.getElementById('keyOk').style.display = 'block';
-  checkBtn2();
+  state.key = k; document.getElementById('keyOk').style.display = 'block'; checkBtn2();
 }
-
 function goStep(n) {
   [1,2,3].forEach(i => {
     document.getElementById('p'+i).classList.toggle('active', i===n);
@@ -182,95 +172,73 @@ function goStep(n) {
     s.className = 'step'+(i===n?' active':i<n?' done':'');
   });
 }
-
+function resizeImage(dataUrl, maxSize, callback) {
+  const img = new Image();
+  img.onload = function() {
+    let w = img.width, h = img.height;
+    if (w > maxSize || h > maxSize) {
+      if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+      else { w = Math.round(w * maxSize / h); h = maxSize; }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL('image/jpeg', 0.85));
+  };
+  img.src = dataUrl;
+}
 function handleFile(e, type) {
   const f = e.target.files[0]; if(!f) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const full = ev.target.result;
-    const b64 = full.split(',')[1];
-    if (type==='model') {
-      state.modelB64 = b64;
-      document.getElementById('img1').src = full;
-      document.getElementById('p1 .upload-zone') && (document.querySelector('#p1 .upload-zone').style.display='none');
-      document.getElementById('prev1').style.display='block';
-      document.getElementById('btn1').disabled=false;
-    } else {
-      state.garmentB64 = b64;
-      document.getElementById('img2').src = full;
-      document.getElementById('prev2').style.display='block';
-      checkBtn2();
-    }
+    resizeImage(ev.target.result, 1024, (resized) => {
+      if (type==='model') {
+        state.modelDataUrl = resized;
+        document.getElementById('img1').src = resized;
+        document.getElementById('zone1').style.display = 'none';
+        document.getElementById('prev1').style.display = 'block';
+        document.getElementById('btn1').disabled = false;
+      } else {
+        state.garmentDataUrl = resized;
+        document.getElementById('img2').src = resized;
+        document.getElementById('zone2').style.display = 'none';
+        document.getElementById('prev2').style.display = 'block';
+        checkBtn2();
+      }
+    });
   };
   reader.readAsDataURL(f);
 }
-
 function resetFile(type) {
-  if(type==='model'){
-    state.modelB64=null;
-    document.getElementById('fi1').value='';
-    document.getElementById('prev1').style.display='none';
-    document.getElementById('btn1').disabled=true;
-  } else {
-    state.garmentB64=null;
-    document.getElementById('fi2').value='';
-    document.getElementById('prev2').style.display='none';
-    checkBtn2();
-  }
+  if(type==='model'){ state.modelDataUrl=null; document.getElementById('fi1').value=''; document.getElementById('zone1').style.display='block'; document.getElementById('prev1').style.display='none'; document.getElementById('btn1').disabled=true; }
+  else { state.garmentDataUrl=null; document.getElementById('fi2').value=''; document.getElementById('zone2').style.display='block'; document.getElementById('prev2').style.display='none'; checkBtn2(); }
 }
-
-function checkBtn2() {
-  document.getElementById('btn2').disabled = !(state.key && state.garmentB64);
-}
-
-function setProgress(pct, msg) {
-  document.getElementById('progFill').style.width = pct+'%';
-  document.getElementById('progMsg').textContent = msg;
-}
-
-function resetResult() {
-  document.getElementById('resultImg').style.display='none';
-  document.getElementById('resultPh').style.display='block';
-  document.getElementById('btnDl').disabled=true;
-}
-
-function downloadResult() {
-  if (!state.resultUrl) return;
-  const a = document.createElement('a');
-  a.href = state.resultUrl; a.download='palmi-tryon.png'; a.target='_blank';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-}
-
+function checkBtn2() { document.getElementById('btn2').disabled = !(state.key && state.garmentDataUrl); }
+function setProgress(pct, msg) { document.getElementById('progFill').style.width = pct+'%'; document.getElementById('progMsg').textContent = msg; }
+function resetResult() { document.getElementById('resultImg').style.display='none'; document.getElementById('resultPh').style.display='block'; document.getElementById('btnDl').disabled=true; }
+function downloadResult() { if (!state.resultUrl) return; const a = document.createElement('a'); a.href = state.resultUrl; a.download='palmi-tryon.png'; a.target='_blank'; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
 async function runTryOn() {
-  if (!state.key || !state.modelB64 || !state.garmentB64) return;
+  if (!state.key || !state.modelDataUrl || !state.garmentDataUrl) return;
   document.getElementById('errBox').style.display='none';
   goStep(3);
   document.getElementById('progWrap').style.display='block';
   resetResult();
   document.getElementById('phIcon').textContent='⏳';
   document.getElementById('phMsg').textContent='KI arbeitet …';
-
   const msgs=[[15,'Bilder vorbereiten …'],[35,'KI analysiert dein Foto …'],[55,'Kleidung anpassen …'],[75,'Rendering …'],[88,'Fast fertig …']];
   let si=0;
   const iv=setInterval(()=>{ if(si<msgs.length){setProgress(msgs[si][0],msgs[si][1]);si++;} },2000);
-
   try {
-    // Call our own backend proxy (no CORS issue)
+    const modelB64 = state.modelDataUrl.split(',')[1];
+    const garmentB64 = state.garmentDataUrl.split(',')[1];
     const r1 = await fetch('/api/run', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        fashn_key: state.key,
-        model_image: state.modelB64,
-        garment_image: state.garmentB64
-      })
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ fashn_key: state.key, model_image: modelB64, garment_image: garmentB64 })
     });
     if(!r1.ok){ const e=await r1.json().catch(()=>({})); throw new Error(e.error||e.detail||'Fehler '+r1.status); }
     const { id } = await r1.json();
     if(!id) throw new Error('Keine Prediction ID.');
-
     let out=null;
     for(let i=0;i<60;i++){
       await sleep(2000);
@@ -281,7 +249,6 @@ async function runTryOn() {
     }
     clearInterval(iv);
     if(!out) throw new Error('Timeout — bitte erneut versuchen.');
-
     setProgress(100,'✓ Fertig!');
     setTimeout(()=>document.getElementById('progWrap').style.display='none',1500);
     state.resultUrl=out;
@@ -289,7 +256,6 @@ async function runTryOn() {
     img.src=out; img.style.display='block';
     document.getElementById('resultPh').style.display='none';
     document.getElementById('btnDl').disabled=false;
-
   } catch(err) {
     clearInterval(iv);
     document.getElementById('progWrap').style.display='none';
