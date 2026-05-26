@@ -8,9 +8,11 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname)));
 
+const FASHN_KEY = 'DEIN-KEY-HIER';
+
 app.post('/api/run', async (req, res) => {
-  const { fashn_key, model_image, garment_image } = req.body;
-  if (!fashn_key || !model_image || !garment_image) {
+  const { model_image, garment_image } = req.body;
+  if (!model_image || !garment_image) {
     return res.status(400).json({ error: 'Missing fields' });
   }
   try {
@@ -20,7 +22,7 @@ app.post('/api/run', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + fashn_key
+        'Authorization': 'Bearer ' + FASHN_KEY
       },
       body: JSON.stringify({
         model_name: 'tryon-v1.6',
@@ -36,11 +38,9 @@ app.post('/api/run', async (req, res) => {
 });
 
 app.get('/api/status/:id', async (req, res) => {
-  const { fashn_key } = req.query;
-  if (!fashn_key) return res.status(400).json({ error: 'Missing key' });
   try {
     const r = await fetch('https://api.fashn.ai/v1/status/' + req.params.id, {
-      headers: { 'Authorization': 'Bearer ' + fashn_key }
+      headers: { 'Authorization': 'Bearer ' + FASHN_KEY }
     });
     const data = await r.json();
     res.json(data);
