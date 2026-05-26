@@ -27,11 +27,8 @@ app.post('/api/run', async (req, res) => {
         inputs: {
           model_image: modelUrl,
           garment_image: garmentUrl,
-          category: 'one-piece',
           num_inference_steps: 50,
-          guidance_scale: 2.5,
-          timestep_spacing: 'trailing',
-          lora_scale: 1
+          guidance_scale: 2.5
         }
       })
     });
