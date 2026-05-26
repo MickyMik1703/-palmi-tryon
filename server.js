@@ -24,7 +24,15 @@ app.post('/api/run', async (req, res) => {
       },
       body: JSON.stringify({
         model_name: 'tryon-v1.6',
-        inputs: { model_image: modelUrl, garment_image: garmentUrl }
+        inputs: {
+          model_image: modelUrl,
+          garment_image: garmentUrl,
+          category: 'one-piece',
+          num_inference_steps: 50,
+          guidance_scale: 2.5,
+          timestep_spacing: 'trailing',
+          lora_scale: 1
+        }
       })
     });
     const data = await r.json();
