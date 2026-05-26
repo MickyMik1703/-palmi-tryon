@@ -17,25 +17,12 @@ header { background: var(--dark); border-bottom: 1px solid #333; padding: 14px 2
 .hero h1 { font-size: 28px; color: var(--sand); font-weight: 300; letter-spacing: 2px; margin-bottom: 6px; }
 .hero h1 em { color: var(--gold); }
 .hero p { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
-
-/* COUNTER BAR */
 .counter-bar { background: #111; border: 1px solid #222; padding: 14px 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
 .counter-info { font-size: 10px; letter-spacing: 1px; color: var(--muted); }
 .counter-info strong { color: var(--gold); font-size: 14px; }
 .counter-dots { display: flex; gap: 4px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; transition: all 0.3s; }
 .dot.used { background: var(--gold); }
-.dot.empty { background: #333; }
-
-/* KEY BOX */
-.key-box { background: #111; border: 1px solid #2a2a2a; padding: 20px; margin-bottom: 24px; }
-.key-label { font-size: 9px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
-.key-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.key-row input { flex: 1; min-width: 160px; background: #1a1a1a; border: 1px solid #444; padding: 9px 12px; font-family: monospace; font-size: 12px; color: var(--sand); outline: none; }
-.key-row button { background: var(--gold); color: var(--dark); border: none; padding: 9px 18px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
-.key-ok { font-size: 10px; color: #7bc47b; margin-top: 6px; display: none; }
-
-/* STEPS */
 .steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-bottom: 2px; }
 .step { background: #222; color: var(--muted); padding: 11px; text-align: center; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s; }
 .step.active { background: var(--gold); color: var(--dark); }
@@ -72,8 +59,6 @@ header { background: var(--dark); border-bottom: 1px solid #333; padding: 14px 2
 .info-row span { color: var(--gold); }
 .result-btns { display: flex; gap: 8px; margin-top: 20px; }
 .result-btns .btn { flex: 1; text-align: center; }
-
-/* LIMIT OVERLAY */
 .limit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; align-items: center; justify-content: center; }
 .limit-overlay.show { display: flex; }
 .limit-box { background: var(--sand); padding: 48px; max-width: 480px; width: 90%; text-align: center; }
@@ -82,57 +67,34 @@ header { background: var(--dark); border-bottom: 1px solid #333; padding: 14px 2
 .limit-title em { color: var(--gold); font-style: italic; }
 .limit-sub { font-size: 11px; letter-spacing: 1px; color: var(--muted); margin-bottom: 32px; line-height: 1.7; }
 .limit-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-.limit-form input { background: #faf7f2; border: 1px solid var(--warm); padding: 13px 16px; font-family: inherit; font-size: 13px; outline: none; transition: border-color 0.2s; }
+.limit-form input { background: #faf7f2; border: 1px solid var(--warm); padding: 13px 16px; font-family: inherit; font-size: 13px; outline: none; }
 .limit-form input:focus { border-color: var(--gold); }
 .limit-note { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 8px; }
 .limit-skip { background: none; border: none; font-size: 10px; color: var(--muted); cursor: pointer; text-decoration: underline; margin-top: 12px; display: block; font-family: inherit; }
-
-/* SUCCESS MSG */
 .success-msg { background: #f0f8f0; border-left: 3px solid #7bc47b; padding: 12px 16px; font-size: 12px; color: #4a7a4a; margin-top: 12px; display: none; }
-
 footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px; color: #444; text-transform: uppercase; border-top: 1px solid #222; margin-top: 40px; }
 @media(max-width:600px){ .result-grid{grid-template-columns:1fr;} .steps{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo">P<span>A</span>LMI</div>
   <div class="tagline">Virtual Try-On · AI Powered</div>
 </header>
-
 <div class="app">
   <div class="hero">
     <h1>Sieh dich <em>im Produkt</em></h1>
     <p>Echtes KI Try-On · Fashn.ai</p>
   </div>
-
-  <!-- COUNTER -->
   <div class="counter-bar" id="counterBar">
-    <div class="counter-info">
-      Try-Ons verfügbar: <strong id="counterNum">5</strong>
-      <span id="counterLabel"> · Kostenlos</span>
-    </div>
+    <div class="counter-info">Try-Ons verfügbar: <strong id="counterNum">5</strong><span id="counterLabel"> · Kostenlos</span></div>
     <div class="counter-dots" id="counterDots"></div>
   </div>
-
-  <!-- KEY -->
-  <div class="key-box">
-    <div class="key-label">🔑 Fashn.ai API Key</div>
-    <div class="key-row">
-      <input type="password" id="apiKey" placeholder="fa-xxxxxxxxxxxxxxxxxxxxxxxx">
-      <button onclick="saveKey()">OK</button>
-    </div>
-    <div class="key-ok" id="keyOk">✓ Key gespeichert — bereit</div>
-  </div>
-
-  <!-- STEPS -->
   <div class="steps">
     <div class="step active" id="s1">01 · Dein Foto</div>
     <div class="step" id="s2">02 · Produkt</div>
     <div class="step" id="s3">03 · Ergebnis</div>
   </div>
-
   <div class="panel active" id="p1">
     <div class="panel-title">Dein Foto</div>
     <div class="panel-sub">Ganzkörperfoto von vorne</div>
@@ -150,7 +112,6 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
       <button class="btn btn-gold" id="btn1" onclick="goStep(2)" disabled>Weiter →</button>
     </div>
   </div>
-
   <div class="panel" id="p2">
     <div class="panel-title">Produkt Foto</div>
     <div class="panel-sub">Das Kleidungsstück zum Anprobieren</div>
@@ -171,7 +132,6 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
       <button class="btn btn-gold" id="btn2" onclick="runTryOn()" disabled>Try-On starten →</button>
     </div>
   </div>
-
   <div class="panel" id="p3">
     <div class="panel-title">Dein Try-On Ergebnis</div>
     <div class="panel-sub">Fashn.ai v1.6 · KI generiert</div>
@@ -205,220 +165,75 @@ footer { text-align: center; padding: 28px; font-size: 9px; letter-spacing: 2px;
     </div>
   </div>
 </div>
-
-<!-- LIMIT OVERLAY -->
 <div class="limit-overlay" id="limitOverlay">
   <div class="limit-box">
     <div class="limit-icon">✨</div>
     <div class="limit-title">Mehr Try-Ons <em>freischalten</em></div>
-    <div class="limit-sub" id="limitSubText">
-      Du hast deine 5 kostenlosen Try-Ons verwendet.<br>
-      Registriere dich kostenlos und erhalte <strong>20 Try-Ons pro Monat</strong>.
-    </div>
+    <div class="limit-sub" id="limitSubText">Du hast deine 5 kostenlosen Try-Ons verwendet.<br>Registriere dich kostenlos und erhalte <strong>20 Try-Ons pro Monat</strong>.</div>
     <div class="limit-form">
       <input type="text" id="regName" placeholder="Dein Name">
       <input type="email" id="regEmail" placeholder="Deine E-Mail Adresse">
-      <button class="btn btn-gold" onclick="register()" style="width:100%;text-align:center;padding:14px">
-        Kostenlos registrieren →
-      </button>
+      <button class="btn btn-gold" onclick="register()" style="width:100%;text-align:center;padding:14px">Kostenlos registrieren →</button>
     </div>
     <div class="success-msg" id="regSuccess">✓ Erfolgreich! Du hast jetzt 20 Try-Ons pro Monat.</div>
     <div class="limit-note">Kein Spam. Nur PALMI Updates und Angebote.</div>
-    <button class="limit-skip" onclick="closeLimitOverlay()">Nein danke, ich verzichte auf mehr Try-Ons</button>
+    <button class="limit-skip" onclick="closeLimitOverlay()">Nein danke</button>
   </div>
 </div>
-
 <footer>PALMI · Mediterranean Lifestyle · Virtual Try-On</footer>
-
 <script>
-// ===== LIMIT SYSTEM =====
-const LIMIT_FREE = 5;
-const LIMIT_REGISTERED = 20;
-
-function getState() {
-  const s = localStorage.getItem('palmi_tryon_state');
-  if (s) return JSON.parse(s);
-  const now = new Date();
-  const monthKey = now.getFullYear() + '-' + (now.getMonth()+1);
-  return { registered: false, email: '', name: '', used: 0, monthKey, limit: LIMIT_FREE };
-}
-
-function saveState(s) {
-  localStorage.setItem('palmi_tryon_state', JSON.stringify(s));
-}
-
-function resetMonthIfNeeded(s) {
-  const now = new Date();
-  const monthKey = now.getFullYear() + '-' + (now.getMonth()+1);
-  if (s.monthKey !== monthKey) {
-    s.used = 0;
-    s.monthKey = monthKey;
-    saveState(s);
-  }
-  return s;
-}
-
-function updateCounter() {
-  let s = getState();
-  s = resetMonthIfNeeded(s);
-  const remaining = Math.max(0, s.limit - s.used);
-  document.getElementById('counterNum').textContent = remaining;
-  document.getElementById('counterLabel').textContent = s.registered ? ' · Registriert' : ' · Kostenlos';
-
-  // dots
-  const dots = document.getElementById('counterDots');
-  dots.innerHTML = '';
-  const total = s.limit;
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot ' + (i < s.used ? 'used' : 'empty');
-    dots.appendChild(d);
-  }
-}
-
-function canTryOn() {
-  let s = getState();
-  s = resetMonthIfNeeded(s);
-  return s.used < s.limit;
-}
-
-function incrementUsed() {
-  let s = getState();
-  s.used++;
-  saveState(s);
-  updateCounter();
-}
-
-function showLimitOverlay() {
-  const s = getState();
-  if (s.registered) {
-    document.getElementById('limitSubText').innerHTML = 'Du hast deine <strong>20 monatlichen Try-Ons</strong> verwendet.<br>Nächsten Monat bekommst du wieder 20 neue.';
-    document.getElementById('regName').style.display = 'none';
-    document.getElementById('regEmail').style.display = 'none';
-    document.querySelector('.limit-form .btn-gold').style.display = 'none';
-    document.querySelector('.limit-skip').textContent = 'Okay, verstanden';
-  }
-  document.getElementById('limitOverlay').classList.add('show');
-}
-
-function closeLimitOverlay() {
-  document.getElementById('limitOverlay').classList.remove('show');
-}
-
-function register() {
-  const name = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  if (!email || !email.includes('@')) { alert('Bitte gib eine gültige E-Mail Adresse ein.'); return; }
-
-  let s = getState();
-  s.registered = true;
-  s.email = email;
-  s.name = name;
-  s.limit = LIMIT_REGISTERED;
-  saveState(s);
-
-  document.getElementById('regSuccess').style.display = 'block';
-  document.querySelector('.limit-form').style.display = 'none';
-  document.querySelector('.limit-skip').textContent = 'Weiter mit Try-On';
-  updateCounter();
-
-  // In production: send email to your server
-  console.log('New registration:', name, email);
-}
-
-// ===== TRY-ON =====
-const state = { key:'', modelDataUrl:null, garmentDataUrl:null, resultUrl:null };
-
-function saveKey() {
-  const k = document.getElementById('apiKey').value.trim();
-  if (!k.startsWith('fa-')) { alert('Key muss mit "fa-" beginnen'); return; }
-  state.key = k; document.getElementById('keyOk').style.display='block'; checkBtn2();
-}
-
-function goStep(n) {
-  [1,2,3].forEach(i => {
-    document.getElementById('p'+i).classList.toggle('active', i===n);
-    const s = document.getElementById('s'+i);
-    s.className = 'step'+(i===n?' active':i<n?' done':'');
-  });
-}
-
-function resizeImage(dataUrl, maxSize, callback) {
-  const img = new Image();
-  img.onload = function() {
-    let w=img.width, h=img.height;
-    if(w>maxSize||h>maxSize){ if(w>h){h=Math.round(h*maxSize/w);w=maxSize;}else{w=Math.round(w*maxSize/h);h=maxSize;} }
-    const c=document.createElement('canvas'); c.width=w; c.height=h;
-    c.getContext('2d').drawImage(img,0,0,w,h);
-    callback(c.toDataURL('image/jpeg',0.85));
-  }; img.src=dataUrl;
-}
-
-function handleFile(e, type) {
-  const f=e.target.files[0]; if(!f) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{ resizeImage(ev.target.result,1024,(resized)=>{
-    if(type==='model'){ state.modelDataUrl=resized; document.getElementById('img1').src=resized; document.getElementById('zone1').style.display='none'; document.getElementById('prev1').style.display='block'; document.getElementById('btn1').disabled=false; }
-    else { state.garmentDataUrl=resized; document.getElementById('img2').src=resized; document.getElementById('zone2').style.display='none'; document.getElementById('prev2').style.display='block'; checkBtn2(); }
-  }); }; reader.readAsDataURL(f);
-}
-
-function resetFile(type) {
-  if(type==='model'){ state.modelDataUrl=null; document.getElementById('fi1').value=''; document.getElementById('zone1').style.display='block'; document.getElementById('prev1').style.display='none'; document.getElementById('btn1').disabled=true; }
-  else { state.garmentDataUrl=null; document.getElementById('fi2').value=''; document.getElementById('zone2').style.display='block'; document.getElementById('prev2').style.display='none'; checkBtn2(); }
-}
-function checkBtn2(){ document.getElementById('btn2').disabled=!(state.key&&state.garmentDataUrl); }
-function setProgress(p,m){ document.getElementById('progFill').style.width=p+'%'; document.getElementById('progMsg').textContent=m; }
-function resetResult(){ document.getElementById('resultImg').style.display='none'; document.getElementById('resultPh').style.display='block'; document.getElementById('btnDl').disabled=true; }
-function downloadResult(){ if(!state.resultUrl)return; const a=document.createElement('a'); a.href=state.resultUrl; a.download='palmi-tryon.png'; a.target='_blank'; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-async function runTryOn() {
-  // Check limit
-  if (!canTryOn()) { showLimitOverlay(); return; }
-  if (!state.key||!state.modelDataUrl||!state.garmentDataUrl) return;
-
+const LIMIT_FREE=5,LIMIT_REGISTERED=20;
+function getState(){const s=localStorage.getItem('palmi_tryon_state');if(s)return JSON.parse(s);const now=new Date();const monthKey=now.getFullYear()+'-'+(now.getMonth()+1);return{registered:false,email:'',name:'',used:0,monthKey,limit:LIMIT_FREE};}
+function saveState(s){localStorage.setItem('palmi_tryon_state',JSON.stringify(s));}
+function resetMonthIfNeeded(s){const now=new Date();const monthKey=now.getFullYear()+'-'+(now.getMonth()+1);if(s.monthKey!==monthKey){s.used=0;s.monthKey=monthKey;saveState(s);}return s;}
+function updateCounter(){let s=getState();s=resetMonthIfNeeded(s);const remaining=Math.max(0,s.limit-s.used);document.getElementById('counterNum').textContent=remaining;document.getElementById('counterLabel').textContent=s.registered?' · Registriert':' · Kostenlos';const dots=document.getElementById('counterDots');dots.innerHTML='';const total=s.limit;for(let i=0;i<Math.min(total,20);i++){const d=document.createElement('div');d.className='dot '+(i<s.used?'used':'empty');dots.appendChild(d);}}
+function canTryOn(){let s=getState();s=resetMonthIfNeeded(s);return s.used<s.limit;}
+function incrementUsed(){let s=getState();s.used++;saveState(s);updateCounter();}
+function showLimitOverlay(){const s=getState();if(s.registered){document.getElementById('limitSubText').innerHTML='Du hast deine <strong>20 monatlichen Try-Ons</strong> verwendet.<br>Nächsten Monat bekommst du wieder 20 neue.';document.getElementById('regName').style.display='none';document.getElementById('regEmail').style.display='none';document.querySelector('.limit-form .btn-gold').style.display='none';document.querySelector('.limit-skip').textContent='Okay, verstanden';}document.getElementById('limitOverlay').classList.add('show');}
+function closeLimitOverlay(){document.getElementById('limitOverlay').classList.remove('show');}
+function register(){const name=document.getElementById('regName').value.trim();const email=document.getElementById('regEmail').value.trim();if(!email||!email.includes('@')){alert('Bitte gib eine gültige E-Mail ein.');return;}let s=getState();s.registered=true;s.email=email;s.name=name;s.limit=LIMIT_REGISTERED;saveState(s);document.getElementById('regSuccess').style.display='block';document.querySelector('.limit-form').style.display='none';document.querySelector('.limit-skip').textContent='Weiter mit Try-On';updateCounter();}
+const state={modelDataUrl:null,garmentDataUrl:null,resultUrl:null};
+function goStep(n){[1,2,3].forEach(i=>{document.getElementById('p'+i).classList.toggle('active',i===n);const s=document.getElementById('s'+i);s.className='step'+(i===n?' active':i<n?' done':'');});}
+function resizeImage(dataUrl,maxSize,callback){const img=new Image();img.onload=function(){let w=img.width,h=img.height;if(w>maxSize||h>maxSize){if(w>h){h=Math.round(h*maxSize/w);w=maxSize;}else{w=Math.round(w*maxSize/h);h=maxSize;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);callback(c.toDataURL('image/jpeg',0.85));};img.src=dataUrl;}
+function handleFile(e,type){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{resizeImage(ev.target.result,1024,(resized)=>{if(type==='model'){state.modelDataUrl=resized;document.getElementById('img1').src=resized;document.getElementById('zone1').style.display='none';document.getElementById('prev1').style.display='block';document.getElementById('btn1').disabled=false;}else{state.garmentDataUrl=resized;document.getElementById('img2').src=resized;document.getElementById('zone2').style.display='none';document.getElementById('prev2').style.display='block';checkBtn2();}});};reader.readAsDataURL(f);}
+function resetFile(type){if(type==='model'){state.modelDataUrl=null;document.getElementById('fi1').value='';document.getElementById('zone1').style.display='block';document.getElementById('prev1').style.display='none';document.getElementById('btn1').disabled=true;}else{state.garmentDataUrl=null;document.getElementById('fi2').value='';document.getElementById('zone2').style.display='block';document.getElementById('prev2').style.display='none';checkBtn2();}}
+function checkBtn2(){document.getElementById('btn2').disabled=!(state.garmentDataUrl);}
+function setProgress(p,m){document.getElementById('progFill').style.width=p+'%';document.getElementById('progMsg').textContent=m;}
+function resetResult(){document.getElementById('resultImg').style.display='none';document.getElementById('resultPh').style.display='block';document.getElementById('btnDl').disabled=true;}
+function downloadResult(){if(!state.resultUrl)return;const a=document.createElement('a');a.href=state.resultUrl;a.download='palmi-tryon.png';a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+async function runTryOn(){
+  if(!canTryOn()){showLimitOverlay();return;}
+  if(!state.modelDataUrl||!state.garmentDataUrl)return;
   document.getElementById('errBox').style.display='none';
-  goStep(3); document.getElementById('progWrap').style.display='block'; resetResult();
-  document.getElementById('phIcon').textContent='⏳'; document.getElementById('phMsg').textContent='KI arbeitet …';
+  goStep(3);document.getElementById('progWrap').style.display='block';resetResult();
+  document.getElementById('phIcon').textContent='⏳';document.getElementById('phMsg').textContent='KI arbeitet …';
   const msgs=[[15,'Bilder vorbereiten …'],[35,'KI analysiert …'],[55,'Kleidung anpassen …'],[75,'Rendering …'],[88,'Fast fertig …']];
-  let si=0; const iv=setInterval(()=>{ if(si<msgs.length){setProgress(msgs[si][0],msgs[si][1]);si++;} },2000);
-
-  try {
-    const r1=await fetch('/api/run',{ method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ fashn_key:state.key, model_image:state.modelDataUrl.split(',')[1], garment_image:state.garmentDataUrl.split(',')[1] }) });
-    if(!r1.ok){ const e=await r1.json().catch(()=>({})); throw new Error(e.error||e.detail||'Fehler '+r1.status); }
-    const {id}=await r1.json(); if(!id) throw new Error('Keine ID.');
+  let si=0;const iv=setInterval(()=>{if(si<msgs.length){setProgress(msgs[si][0],msgs[si][1]);si++;}},2000);
+  try{
+    const r1=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model_image:state.modelDataUrl.split(',')[1],garment_image:state.garmentDataUrl.split(',')[1]})});
+    if(!r1.ok){const e=await r1.json().catch(()=>({}));throw new Error(e.error||e.detail||'Fehler '+r1.status);}
+    const{id}=await r1.json();if(!id)throw new Error('Keine ID.');
     let out=null;
     for(let i=0;i<60;i++){
       await sleep(2000);
-      const r2=await fetch('/api/status/'+id+'?fashn_key='+encodeURIComponent(state.key));
+      const r2=await fetch('/api/status/'+id);
       const d=await r2.json();
       if(d.status==='completed'){out=d.output?.[0];break;}
-      if(d.status==='failed') throw new Error(d.error?.message||'Fehlgeschlagen.');
+      if(d.status==='failed')throw new Error(d.error?.message||'Fehlgeschlagen.');
     }
-    clearInterval(iv); if(!out) throw new Error('Timeout.');
-
-    // Count this try-on
+    clearInterval(iv);if(!out)throw new Error('Timeout.');
     incrementUsed();
-
-    setProgress(100,'✓ Fertig!'); setTimeout(()=>document.getElementById('progWrap').style.display='none',1500);
-    state.resultUrl=out; const img=document.getElementById('resultImg'); img.src=out; img.style.display='block';
-    document.getElementById('resultPh').style.display='none'; document.getElementById('btnDl').disabled=false;
-
-    // Show limit warning if only 1 left
-    const s = getState();
-    if (s.limit - s.used === 1) {
-      setTimeout(()=>alert('Noch 1 Try-On übrig! Registriere dich für 20 Try-Ons pro Monat.'), 2000);
-    }
-
-  } catch(err) {
-    clearInterval(iv); document.getElementById('progWrap').style.display='none'; goStep(2);
-    const eb=document.getElementById('errBox'); eb.textContent='Fehler: '+err.message; eb.style.display='block';
+    setProgress(100,'✓ Fertig!');setTimeout(()=>document.getElementById('progWrap').style.display='none',1500);
+    state.resultUrl=out;const img=document.getElementById('resultImg');img.src=out;img.style.display='block';
+    document.getElementById('resultPh').style.display='none';document.getElementById('btnDl').disabled=false;
+    const s=getState();if(s.limit-s.used===1){setTimeout(()=>alert('Noch 1 Try-On übrig! Registriere dich für 20 Try-Ons pro Monat.'),2000);}
+  }catch(err){
+    clearInterval(iv);document.getElementById('progWrap').style.display='none';goStep(2);
+    const eb=document.getElementById('errBox');eb.textContent='Fehler: '+err.message;eb.style.display='block';
   }
 }
-
-// Init
 updateCounter();
 </script>
 </body>
