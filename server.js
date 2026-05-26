@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname)));
 
-const FASHN_KEY = 'DEIN-KEY-HIER';
+const FASHN_KEY = 'fa-mwdfHKC0aOZR-WwURC7zths1wG02NRwDyixOQ';
 
 app.post('/api/run', async (req, res) => {
   const { model_image, garment_image } = req.body;
